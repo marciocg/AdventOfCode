@@ -2,15 +2,21 @@ import scala.collection.mutable.SortedMap
 import scala.io.Source
 
 def getMinMaxPair(row: String, tm: Map[String, String]): String =
-  var sm: SortedMap[Int, String] = SortedMap()
-  for k <- tm.keySet
-      // x <- row.indexOf(k)
-      // if x >= 0
-  do  sm.addOne(row.indexOf(k) -> k)
-  sm.remove(-1)
-  tm(sm.head._2) concat tm(sm.last._2)
+  val smin: SortedMap[Int, String] = SortedMap()
+  val smax: SortedMap[Int, String] = SortedMap()
 
-@main def Part2(): Unit =
+  for k <- tm.keySet
+  do 
+    if row.indexOf(k) > -1 then
+      if smin.get(row.indexOf(k)) == None then
+        smin.addOne(row.indexOf(k) -> k)
+      end if
+      smax.addOne(row.lastIndexOf(k) -> k)
+    end if
+
+  tm(smin.head._2) concat tm(smax.last._2)
+
+def day1(): Unit =
 
   val tmap: Map[String, String] = Map(
      "one" -> "1",
@@ -35,11 +41,9 @@ def getMinMaxPair(row: String, tm: Map[String, String]): String =
   )
 
   var sum: Int = 0
-  val data = Source.fromFile("in.txt").getLines()
+  val data = Source.fromResource("day1.txt").getLines()
 
   for row <- data
-  do
-    // println(s"$row => ${Integer.parseInt(getMinMaxPair(row, tmap))}")
-    sum += Integer.parseInt(getMinMaxPair(row, tmap))
+  do  sum += Integer.parseInt(getMinMaxPair(row, tmap))
 
   println(sum)
